@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MyChatBot!</title>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        background-color: #f2f2f2;
+        font-family: Arial, sans-serif;
+    }
+    #banner {
+        background-color: #333;
+        color: #ffffff;
+        padding: 10px;
+        text-align: center;
+    }
+    #container {
+        padding: 20px;
+        max-width: 600px;
+        margin: auto;
+    }
+    .message {
+        border-radius: 8px;
+        padding: 10px;
+        margin-bottom: 10px;
+        max-width: 70%;
+    }
+    .user-message {
+        background-color: #dcf8c6;
+        align-self: flex-end;
+    }
+    .bot-message {
+        background-color: #cde8fd; 
+        align-self: flex-start;
+    }
+    .message p {
+        margin: 0;
+    }
+    #messageInput {
+        width: calc(100% - 20px);
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 20px;
+        outline: none;
+    }
+    #sendButton {
+        width: 50px;
+        padding: 10px;
+        font-size: 16px;
+        cursor: pointer;
+        border: none;
+        background-color: #8d8d8d;
+        color: #fff;
+        border-radius: 50%;
+        margin-left: 10px;
+    }
+    .input-container {
+        display: flex;
+        align-items: center;
+    }
+    .bot-option {
+        padding: 10px;
+        margin: 5px;
+        cursor: pointer;
+        border-radius: 5px;
+        background-color: #cde8fd; 
+    }
+    .selected {
+        background-color: #ffcc00;
+    }
+    .rating-button {
+        padding: 5px 10px;
+        margin: 5px;
+        cursor: pointer;
+        border-radius: 5px;
+        background-color: #cde8fd;
+    }
+    .selected-rating {
+        background-color: #ffcc00;
+    }
+</style>
+</head>
+<body>
+<div id="banner">
+    <h1>Chat Bot</h1>
+</div>
+<div id="container">
+    <div id="messageContainer"></div>
+    <div class="input-container">
+        <input type="text" id="messageInput" placeholder="Type your message here...">
+        <button id="sendButton">Send</button>
+    </div>
+    <div id="botOptions">
+        <div class="bot-option" id="option1">Option 1</div>
+        <div class="bot-option" id="option2">Option 2</div>
+        <div class="bot-option" id="option3">Option 3</div>
+    </div>
+</div>
+<script>
+    var selectedOption = null;
+    var selectedRating = null;
+
+    document.querySelectorAll(".bot-option").forEach(function(option) {
+        option.addEventListener("click", function() {
+            clearSelections();
+            selectedOption = this;
+            selectedOption.classList.add("selected");
+            createRatingButtons();
+        });
+    });
+
+    document.getElementById("sendButton").addEventListener("click", function() {
+        var messageInput = document.getElementById("messageInput");
+        var message = messageInput.value.trim();
+        if (message !== "" && selectedOption !== null && selectedRating !== null) {
+            var sender = selectedOption.textContent;
+            appendMessage(sender, "bot", selectedRating);
+            appendMessage(message, "user");
+            messageInput.value = "";
+            clearSelections();
+        } else {
+            alert("Please select an option and rate before sending.");
+        }
+    });
+
+    function createRatingButtons() {
+        var ratingContainer = document.createElement("div");
+        ratingContainer.classList.add("rating-container");
+        for (var i = 1; i <= 5; i++) {
+            var ratingButton = document.createElement("div");
+            ratingButton.classList.add("rating-button");
+            switch (i) {
+                case 1:
+                    ratingButton.textContent = i + ": Aweful"
+                    break;
+                case 5:
+                    ratingButton.textContent = i + ": Amazing"
+                    break;
+                default:
+                    ratingButton.textContent = i;
+            }
+            ratingButton.addEventListener("click", function() {
+                if (selectedRating) {
+                    selectedRating.classList.remove("selected-rating");
+                }
+
+                selectedRating = this;
+                selectedRating.classList.add("selected-rating");
+            });
+            ratingContainer.appendChild(ratingButton);
+        }
+        document.getElementById("container").appendChild(ratingContainer);
+    }
+
+    function clearSelections() {
+        if (selectedOption) {
+            selectedOption.classList.remove("selected");
+            selectedOption = null;
+        }
+
+        if (selectedRating) {
+            selectedRating.classList.remove("selected-rating");
+            selectedRating = null;
+        }
+
+        var ratingContainer = document.querySelector(".rating-container");
+        if (ratingContainer) {
+            ratingContainer.parentNode.removeChild(ratingContainer);
+        }
+    }
+
+    function appendMessage(message, sender, rating) {
+        var messageContainer = document.getElementById("messageContainer");
+        var messageBox = document.createElement("div");
+        messageBox.classList.add("message", sender + "-message");
+        messageBox.innerHTML = "<p>" + message + "</p>";
+        if (sender === "bot" && rating) {
+            // MY DEBUGGING CODE
+            //TODO: make it send the rating to a file, and get the rating to be a thing
+            if (rating >= 4) {
+                messageBox.style.backgroundColor = "#dcf8c6";
+            } else if (rating >= 2) {
+                messageBox.style.backgroundColor = "#fffacd";
+            } else {
+                messageBox.style.backgroundColor = "#ff9999";
+            }
+        }
+        messageContainer.appendChild(messageBox);
+        messageContainer.scrollTop = messageContainer.scrollHeight;
+    }
+</script>
+</body>
+</html>
