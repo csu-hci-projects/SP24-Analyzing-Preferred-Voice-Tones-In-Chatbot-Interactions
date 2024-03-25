@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MyChatBot!</title>
 <style>
+    /* ToDo: Change color for bot to be differnet from users */
     body {
         margin: 0;
         padding: 0;
@@ -29,7 +30,7 @@
         max-width: 70%;
     }
     .user-message {
-        background-color: #dcf8c6;
+        background-color: #a6f26c;
         align-self: flex-end;
     }
     .bot-message {
@@ -48,7 +49,7 @@
         outline: none;
     }
     #sendButton {
-        width: 50px;
+        width: 60px;
         padding: 10px;
         font-size: 16px;
         cursor: pointer;
@@ -86,7 +87,7 @@
 </head>
 <body>
 <div id="banner">
-    <h1>Chat Bot</h1>
+    <h1>MyChatBot!</h1>
 </div>
 <div id="container">
     <div id="messageContainer"></div>
@@ -118,8 +119,8 @@
         var message = messageInput.value.trim();
         if (message !== "" && selectedOption !== null && selectedRating !== null) {
             var sender = selectedOption.textContent;
-            appendMessage(sender, "bot", selectedRating);
             appendMessage(message, "user");
+            appendMessage(sender, "bot", selectedRating);
             messageInput.value = "";
             clearSelections();
         } else {
@@ -150,6 +151,14 @@
 
                 selectedRating = this;
                 selectedRating.classList.add("selected-rating");
+                var messageInput = document.getElementById("messageInput");
+                fetch('http://localhost:8000/rating', {
+                    method: 'POST',
+                    body: messageInput.value.trim() + selectedRating.textContent.trim(),
+                    headers: {
+                        'Content-Type': 'text/plain'
+                    }
+                })
             });
             ratingContainer.appendChild(ratingButton);
         }
@@ -178,17 +187,7 @@
         var messageBox = document.createElement("div");
         messageBox.classList.add("message", sender + "-message");
         messageBox.innerHTML = "<p>" + message + "</p>";
-        if (sender === "bot" && rating) {
-            // MY DEBUGGING CODE
-            //TODO: make it send the rating to a file, and get the rating to be a thing
-            if (rating >= 4) {
-                messageBox.style.backgroundColor = "#dcf8c6";
-            } else if (rating >= 2) {
-                messageBox.style.backgroundColor = "#fffacd";
-            } else {
-                messageBox.style.backgroundColor = "#ff9999";
-            }
-        }
+        messageBox.style.backgroundColor = "#cde8fd";
         messageContainer.appendChild(messageBox);
         messageContainer.scrollTop = messageContainer.scrollHeight;
     }
