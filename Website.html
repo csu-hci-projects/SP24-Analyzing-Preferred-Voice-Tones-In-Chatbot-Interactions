@@ -109,7 +109,13 @@
         option.addEventListener("click", function() {
             clearSelections();
             selectedOption = this;
-            selectedOption.classList.add("selected");
+            var messageInput = document.getElementById("messageInput");
+            var message = messageInput.value.trim();
+            if(message !== ""){
+                selectedOption.classList.add("selected");}
+            else{
+                alert("Please select an option before sending.");
+            }
             createRatingButtons();
         });
     });
@@ -117,14 +123,14 @@
     document.getElementById("sendButton").addEventListener("click", function() {
         var messageInput = document.getElementById("messageInput");
         var message = messageInput.value.trim();
-        if (message !== "" && selectedOption !== null && selectedRating !== null) {
+        if (message !== "" && selectedOption !== null) {
             var sender = selectedOption.textContent;
             appendMessage(message, "user");
             appendMessage(sender, "bot", selectedRating);
             messageInput.value = "";
             clearSelections();
         } else {
-            alert("Please select an option and rate before sending.");
+            alert("Please type a message and select an option before sending.");
         }
     });
 
@@ -154,7 +160,7 @@
                 var messageInput = document.getElementById("messageInput");
                 fetch('http://localhost:8000/rating', {
                     method: 'POST',
-                    body: messageInput.value.trim() + selectedRating.textContent.trim(),
+                    body: messageInput.value.trim() + selectedRating.textContent.trim()[0],
                     headers: {
                         'Content-Type': 'text/plain'
                     }
