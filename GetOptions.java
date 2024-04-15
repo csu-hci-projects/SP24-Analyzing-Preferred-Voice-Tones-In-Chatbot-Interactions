@@ -12,48 +12,33 @@ import java.net.InetSocketAddress;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-public class RecordToFile {
+public class GetOptions {
     public static void main(String[] args) throws IOException {
-        HttpServer server = HttpServer.create(new InetSocketAddress(8999), 0);
-        server.createContext("/rating", new RatingHandler());
-        // server.createContext("/test", new RatingHandler());
+        HttpServer server = HttpServer.create(new InetSocketAddress(8998), 0);
+        // server.createContext("/rating", new RatingHandler());
+        server.createContext("/file", new FileHandler());
         server.start();
     }
     
-    static class RatingHandler implements HttpHandler {
+    static class FileHandler implements HttpHandler {
         @Override
-        public void handle(HttpExchange exchange) throws IOException {
-            if ("POST".equals(exchange.getRequestMethod())) {
-                InputStream requestBody = exchange.getRequestBody();
-                ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-                int nRead;
-                byte[] data = new byte[1024];
-                while ((nRead = requestBody.read(data, 0, data.length)) != -1) {
-                    buffer.write(data, 0, nRead);
+            public void handle(HttpExchange exchange) throws IOException {
+                if ("GET".equals(exchange.getRequestMethod())) {
+                    
+                    // Read the content of the file
+                    String content = new String(Files.readAllBytes(Paths.get("Answers.txt")));
+                    exchange.sendResponseHeaders(200, content.getBytes().length);
+                    OutputStream os = exchange.getResponseBody();
+                    os.write(content.getBytes());
+                    os.close();
+                } else {
+                    String response = "Not supported";
+                    exchange.sendResponseHeaders(405, response.getBytes().length);
+                    OutputStream os = exchange.getResponseBody();
+                    os.write(response.getBytes());
+                    os.close();
                 }
-                buffer.flush();
-                byte[] requestBodyBytes = buffer.toByteArray();
-                String rating = new String(requestBodyBytes);
-                
-                try (PrintWriter writer = new PrintWriter(new FileWriter("Results.txt", true))) {
-                    writer.println(rating);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                
-                String response = "Rating received: " + rating;
-                exchange.sendResponseHeaders(200, response.getBytes().length);
-                OutputStream os = exchange.getResponseBody();
-                os.write(response.getBytes());
-                os.close();
-            } else {
-                String response = "Not supported";
-                exchange.sendResponseHeaders(405, response.getBytes().length);
-                OutputStream os = exchange.getResponseBody();
-                os.write(response.getBytes());
-                os.close();
             }
-        }
     }
 
     

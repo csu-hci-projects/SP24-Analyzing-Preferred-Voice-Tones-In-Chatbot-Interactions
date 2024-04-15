@@ -98,12 +98,21 @@
     <div id="botOptions">
         <div class="bot-option" id="option1">Option 1</div>
         <div class="bot-option" id="option2">Option 2</div>
-        <div class="bot-option" id="option3">Option 3</div>
     </div>
 </div>
 <script>
     var selectedOption = null;
     var selectedRating = null;
+    var options = [];
+    var i = 0;
+
+    async function fetchOptionsFromFile() {
+        const response = await fetch('http://localhost:8998/file')
+        const data = await response.text();
+        options = data.split('_');
+    }
+
+    fetchOptionsFromFile();
 
     document.querySelectorAll(".bot-option").forEach(function(option) {
         option.addEventListener("click", function() {
@@ -129,10 +138,33 @@
             appendMessage(sender, "bot", selectedRating);
             messageInput.value = "";
             clearSelections();
+            updateBotOptions();
         } else {
             alert("Please type a message and select an option before sending.");
         }
     });
+
+    function updateBotOptions() {
+        
+        // if (i < options.length - 1) {
+        //     document.getElementById("botOptions").innerHTML = `
+        //         <div class="bot-option" id="option1">${options[i]}</div>
+        //         <div class="bot-option" id="option2">${options[i + 1]}</div>
+        //     `;
+        //     i = i + 2;
+        // } else {
+        //     // Handle end of options
+        //     Website.app.exitApp();
+        // }
+        if (i < options.length) {
+            document.getElementById("option1").textContent = options[i];
+            document.getElementById("option2").textContent = options[i+1];
+            i = i + 2;
+        } else {
+            Website.app.exitApp();
+            
+        }
+    }
 
     function createRatingButtons() {
         var ratingContainer = document.createElement("div");
@@ -158,7 +190,7 @@
                 selectedRating = this;
                 selectedRating.classList.add("selected-rating");
                 var messageInput = document.getElementById("messageInput");
-                fetch('http://localhost:8000/rating', {
+                fetch('http://localhost:8999/rating', {
                     method: 'POST',
                     body: messageInput.value.trim() + selectedRating.textContent.trim()[0],
                     headers: {
