@@ -107,7 +107,7 @@
     var i = 0;
 
     async function fetchOptionsFromFile() {
-        const response = await fetch('http://localhost:8999/file')
+        const response = await fetch('http://localhost:8998/file')
         const data = await response.text();
         options = data.split('\n');
     }
@@ -146,7 +146,7 @@
 
     function updateBotOptions() {
         if (i < options.length-1) {
-            document.getElementById("option1").textContent = options[i];
+            document.getElementById("option1").textContent = options;
             document.getElementById("option2").textContent = options[i+1];
             i = i + 2;
         } else {
