@@ -14,7 +14,7 @@ import java.nio.file.Paths;
 
 public class RecordToFile {
     public static void main(String[] args) throws IOException {
-        HttpServer server = HttpServer.create(new InetSocketAddress(8999), 0);
+        HttpServer server = HttpServer.create(new InetSocketAddress(5050), 0);
         server.createContext("/rating", new RatingHandler());
         // server.createContext("/test", new RatingHandler());
         server.start();

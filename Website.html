@@ -127,14 +127,6 @@
 ];
     var i = 0;
 
-    async function fetchOptionsFromFile() {
-        const response = await fetch('http://localhost:8998/file')
-        const data = await response.text();
-        options = data.split('_');
-    }
-
-    fetchOptionsFromFile();
-
     document.querySelectorAll(".bot-option").forEach(function(option) {
         option.addEventListener("click", function() {
             clearSelections();
@@ -166,17 +158,6 @@
     });
 
     function updateBotOptions() {
-        
-        // if (i < options.length - 1) {
-        //     document.getElementById("botOptions").innerHTML = `
-        //         <div class="bot-option" id="option1">${options[i]}</div>
-        //         <div class="bot-option" id="option2">${options[i + 1]}</div>
-        //     `;
-        //     i = i + 2;
-        // } else {
-        //     // Handle end of options
-        //     Website.app.exitApp();
-        // }
         if (i < options.length) {
             document.getElementById("option1").textContent = options[i];
             document.getElementById("option2").textContent = options[i+1];
@@ -211,7 +192,7 @@
                 selectedRating = this;
                 selectedRating.classList.add("selected-rating");
                 var messageInput = document.getElementById("messageInput");
-                fetch('http://localhost:8999/rating', {
+                fetch('http://localhost:5050/rating', {
                     method: 'POST',
                     body: messageInput.value.trim() + selectedRating.textContent.trim()[0],
                     headers: {
